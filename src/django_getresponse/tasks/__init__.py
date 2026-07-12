@@ -1,0 +1,5 @@
+# Celery tasks for django_getresponse
+from .sync_campaigns_from_getresponse import sync_campaigns_from_getresponse
+from .sync_categories_to_getresponse import sync_categories_to_getresponse
+from .sync_products_to_getresponse import sync_products_to_getresponse
+from .sync_shops_to_getresponse import sync_shops_to_getresponse
