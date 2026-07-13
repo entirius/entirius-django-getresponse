@@ -93,7 +93,7 @@ Celery equivalents live in `tasks/` with matching names (`@shared_task(queue="pi
 | Module | Purpose |
 |---|---|
 | `django_checkout` | Cart/Order post_save senders (app-level coupling, no Python import) |
-| `django_crm` | Form FK + contact lookups — mutual dependency, declared after `entirius-django-crm` ships |
+| `django_crm` | Form FK + contact lookups — mutual dependency (crm's compat layer imports this app's models) |
 | `django_pim` | Product / ProductCategory sync sources |
 | `django_regional` | Language / Currency / Country FKs |
 | `django_utils` | `BaseModel`, `CeleryBaseCommand` |
