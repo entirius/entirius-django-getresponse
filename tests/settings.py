@@ -19,10 +19,8 @@ DATABASES = {
     "default": dj_database_url.config(default="postgresql://postgres:postgres@localhost:5432/test"),
 }
 
-# django_crm is deliberately NOT installed here: the two apps are mutually dependent
-# and django_crm is not published yet. The suite is import-only (no DB fixtures) —
-# FK string references to django_crm stay lazy and the django_crm imports in
-# utils/contact_helpers are function-local.
+# The suite is import-only (no DB fixtures); django_agreements is not installed —
+# the consent gate imports it lazily inside has_marketing_consent only.
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.contenttypes",

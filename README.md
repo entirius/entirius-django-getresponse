@@ -2,7 +2,7 @@
 
 GetResponse marketing integration for Volkanos: API accounts and campaigns, automatic contact
 synchronization, category/product/shop sync from `django_pim`, and cart/order-driven contact
-updates via `django_checkout` signals. Works together with `django_crm` (forms and consents).
+updates via `django_checkout` signals. Marketing consent is read from `django_agreements`.
 
 ## Features
 
@@ -18,8 +18,8 @@ updates via `django_checkout` signals. Works together with `django_crm` (forms a
 pip install entirius-django-getresponse
 ```
 
-The host service must also install `django_crm` — the two apps are mutually integrated
-(crm forms feed contact sync; crm's compatibility layer builds on these models).
+The marketing consent gate reads `django_agreements` consent records (per-shop agreement slug;
+leave the slug empty to disable the gate for a shop).
 
 ## Configuration
 

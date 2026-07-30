@@ -696,6 +696,26 @@ wheels = [
 ]
 
 [[package]]
+name = "entirius-django-agreements"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
+    { name = "django", version = "6.0.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "djangorestframework" },
+    { name = "djangorestframework-simplejwt" },
+    { name = "drf-spectacular" },
+    { name = "entirius-django-regional" },
+    { name = "entirius-django-utils" },
+    { name = "entirius-py-process-logger" },
+    { name = "pydantic" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/dd/ce/d88380c71f9ba0db3b82d2205eaa723ed0e989d7a5018337e50e90744c70/entirius_django_agreements-2.0.0.tar.gz", hash = "sha256:e9f66d7b59006ba71a2f0beccd5e70e6ce2d83019cee1ac3cc4119b16c38c26f", size = 125668, upload-time = "2026-07-10T18:59:42.983Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0e/4c/cbc4a42d83c030604002d62d900252ae3f3f3484c75ab723ca5ab1783d69/entirius_django_agreements-2.0.0-py3-none-any.whl", hash = "sha256:67763ace58571745c2b7f035f1d0e1f789edbeae04e379988cad663115b0a21b", size = 86637, upload-time = "2026-07-10T18:59:41.622Z" },
+]
+
+[[package]]
 name = "entirius-django-checkout"
 version = "9.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -735,30 +755,6 @@ wheels = [
 ]
 
 [[package]]
-name = "entirius-django-crm"
-version = "3.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
-    { name = "django", version = "6.0.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
-    { name = "entirius-django-checkout" },
-    { name = "entirius-django-getresponse" },
-    { name = "entirius-django-regional" },
-    { name = "entirius-django-utils" },
-    { name = "entirius-py-edrone-sdk" },
-    { name = "entirius-py-get-response-sdk" },
-    { name = "entirius-py-process-logger" },
-    { name = "entirius-py-synerise-sdk" },
-    { name = "marshmallow" },
-    { name = "marshmallow-dataclass" },
-    { name = "tqdm" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/b1/3b/00fbcd9f66d878479cf62408163f583eb185ed08136aeb6d1c36ba3b2248/entirius_django_crm-3.0.0.tar.gz", hash = "sha256:cc201915dfd54394a4affe9a776bc33d14c44af2d5085a2230706708ca9aaad5", size = 195761, upload-time = "2026-07-12T23:27:46.961Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/9f/52/526f949985da4fd5f303cbb90e7c130dac125f0661e5ba968d0997c8e5a4/entirius_django_crm-3.0.0-py3-none-any.whl", hash = "sha256:077599ba97651ea68a3841cc057e9aa7e4d3afe0915a7128ebb9c4795c27b7fd", size = 35922, upload-time = "2026-07-12T23:27:46.081Z" },
-]
-
-[[package]]
 name = "entirius-django-email"
 version = "4.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -780,14 +776,14 @@ wheels = [
 
 [[package]]
 name = "entirius-django-getresponse"
-version = "2.1.0"
+version = "3.0.0"
 source = { editable = "." }
 dependencies = [
     { name = "celery" },
     { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.12'" },
     { name = "django", version = "6.0.7", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.12'" },
+    { name = "entirius-django-agreements" },
     { name = "entirius-django-checkout" },
-    { name = "entirius-django-crm" },
     { name = "entirius-django-pim" },
     { name = "entirius-django-pricemanager" },
     { name = "entirius-django-regional" },
@@ -814,8 +810,8 @@ requires-dist = [
     { name = "celery" },
     { name = "dj-database-url", marker = "extra == 'test'" },
     { name = "django", specifier = ">=5.0" },
+    { name = "entirius-django-agreements", specifier = ">=2.0.0" },
     { name = "entirius-django-checkout", specifier = ">=9.0.0" },
-    { name = "entirius-django-crm", specifier = ">=3.0.0" },
     { name = "entirius-django-pim", specifier = ">=3.0.0" },
     { name = "entirius-django-pricemanager", specifier = ">=4.0.1" },
     { name = "entirius-django-regional", specifier = ">=2.0.0" },
@@ -962,18 +958,6 @@ wheels = [
 ]
 
 [[package]]
-name = "entirius-py-edrone-sdk"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/53/c8/4ca685a615bd92f959630f8c4eb5abee96fe56a11c7524508776977e0f07/entirius_py_edrone_sdk-2.0.0.tar.gz", hash = "sha256:b17a8ca67952765c3f0a0ab879d5fbc38f24b9a88dacacf8791250838b12d619", size = 32266, upload-time = "2026-07-05T19:25:28.282Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/23/11/4a4aec927fef741041ffeb6c4f4bee4ca89e68b8e989b393af45df5cd0ac/entirius_py_edrone_sdk-2.0.0-py3-none-any.whl", hash = "sha256:28eee8ca8b7c06f1f1ec5d4ac691b079a7b382252971b5323c19481e4e4ba379", size = 11969, upload-time = "2026-07-05T19:25:27.379Z" },
-]
-
-[[package]]
 name = "entirius-py-get-response-sdk"
 version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -1088,18 +1072,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/18/3a/1d7f7234aec57e44dc96a5f1408871f266372336c0072912d17f98a8ec09/entirius_py_przelewy24_sdk-2.0.0.tar.gz", hash = "sha256:453e3dbdb485d5aab2293941bcdbe6cce6c5dbd41c5d34c2eac7bad055cd4df8", size = 34953, upload-time = "2026-07-05T13:08:34.536Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/dc/00/68fa3c9b3da439e4792efc482155689595364965efaf475fcb305f1cdd5c/entirius_py_przelewy24_sdk-2.0.0-py3-none-any.whl", hash = "sha256:33f7f746981181db17213d216b604e55265bc5c07dd6217ebf169215bbb025fb", size = 13442, upload-time = "2026-07-05T13:08:33.627Z" },
-]
-
-[[package]]
-name = "entirius-py-synerise-sdk"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/70/14/db0dc60f287c20ca0cae8c4cd80f039017b3f5ccb70858a190ffb4030799/entirius_py_synerise_sdk-2.0.0.tar.gz", hash = "sha256:489fdb123865fd29bfb14455a2467db6304c4ff22400e69b76ac76f076a8f9c8", size = 31692, upload-time = "2026-07-05T19:25:21.946Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/5a/e4/355d91999bf3c2e60c3f171db683cdd08a5b300af1f756434322786e3b1c/entirius_py_synerise_sdk-2.0.0-py3-none-any.whl", hash = "sha256:9a5378ff515fd7a8a10da887fe814fda83747b68345f659d71ca4d29328ea911", size = 10010, upload-time = "2026-07-05T19:25:20.988Z" },
 ]
 
 [[package]]
