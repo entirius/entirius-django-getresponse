@@ -5,10 +5,10 @@
 """Consent gate for GetResponse sync.
 
 Cart/Order push and GR contact creation are blocked until the customer has
-granted a configurable marketing consent in django-crm. Resources created
-BEFORE consent was granted are never pushed (no backfill), with a tolerance
-window (MARKETING_CONSENT_GRACE_SECONDS) to absorb same-request races between
-Order/Cart creation and Consent save.
+granted a configurable marketing consent in django-agreements. Resources
+created BEFORE consent was granted are never pushed (no backfill), with a
+tolerance window (MARKETING_CONSENT_GRACE_SECONDS) to absorb same-request
+races between Order/Cart creation and consent recording.
 
 When a shop's `marketing_consent_type_name` is empty, the gate is DISABLED for
 that shop: sync proceeds without any consent check (contact is auto-created
@@ -27,20 +27,30 @@ def is_consent_required(shop) -> bool:
 
 def has_marketing_consent(*, email: str | None, shop, resource_created_at: datetime) -> bool:
     """True if consent is satisfied: either the gate is disabled for this shop,
-    or the email granted the shop-configured consent within grace of resource_created_at."""
-    from django_crm.models import Consent
+    or the email granted the shop-configured consent within grace of resource_created_at.
+
+    Consent state is the latest django-agreements ConsentRecord (append-only log)
+    for the agreement slug configured on the shop, evaluated as of the cutoff;
+    pending double opt-in records do not count as granted.
+    """
+    from django_agreements.models.consent_record import SOURCE_DOUBLE_OPTIN_PENDING, ConsentRecord
 
     if not is_consent_required(shop):
         return True
     if not email:
         return False
     cutoff = resource_created_at + timedelta(seconds=MARKETING_CONSENT_GRACE_SECONDS)
-    return Consent.objects.filter(
-        form__email=email,
-        consent_type__name=shop.marketing_consent_type_name,
-        consent_bool=True,
-        updated_at__lte=cutoff,
-    ).exists()
+    latest = (
+        ConsentRecord.objects.filter(
+            email=email,
+            agreement_version__definition__slug=shop.marketing_consent_type_name,
+            created_at__lte=cutoff,
+        )
+        .exclude(source=SOURCE_DOUBLE_OPTIN_PENDING)
+        .order_by("-created_at")
+        .first()
+    )
+    return bool(latest and latest.granted)
 
 
 def get_consent_type_name_for_channel(*, channel_idx: str | None, language_iso2: str | None = None) -> str:

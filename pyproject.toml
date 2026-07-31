@@ -1,8 +1,14 @@
 [project]
 name = "entirius-django-getresponse"
-version = "2.1.0"
+version = "3.0.0"
 description = "GetResponse marketing integration for Volkanos: accounts, campaigns, contact/category/product sync"
 authors = [{ name = "Entirius" }]
+maintainers = [
+    { name = "Piotr Brzozowski" },
+    { name = "Paweł Kiełt" },
+    { name = "Mateusz Baran" },
+    { name = "Michał Kloczkowski" },
+]
 readme = "README.md"
 requires-python = ">=3.11"
 license = "MPL-2.0"
@@ -12,9 +18,9 @@ dependencies = [
     # app-level coupling: receivers connect post_save to django_checkout.Order/Cart
     # (lazy string sender registered unconditionally in apps.ready — signals.E001 without it)
     "entirius-django-checkout>=9.0.0",
-    # mutual dependency: django_crm's compat layer imports this app's models,
-    # this app FKs django_crm.form and imports it in utils — both declare each other
-    "entirius-django-crm>=3.0.0",
+    # marketing consent gate reads django_agreements ConsentRecord (lazy import in
+    # services/marketing_consent_service; gate disabled per shop when slug empty)
+    "entirius-django-agreements>=2.0.0",
     "entirius-django-pim>=3.0.0",
     "entirius-django-regional>=2.0.0",
     "entirius-django-utils>=2.0.0",

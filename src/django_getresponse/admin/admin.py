@@ -87,7 +87,7 @@ class GetResponseShopAdmin(SyncStatusBadgeMixin, ResyncActionMixin, admin.ModelA
                 "fields": ("cart_campaign", "crm_campaign"),
                 "description": (
                     "Route contacts by source. cart_campaign: contacts created from cart/order. "
-                    "crm_campaign: contacts created from the CRM newsletter form. "
+                    "crm_campaign: contacts created from newsletter signups (legacy field name). "
                     "Either falls back to language auto-select when empty."
                 ),
             },
@@ -97,9 +97,9 @@ class GetResponseShopAdmin(SyncStatusBadgeMixin, ResyncActionMixin, admin.ModelA
             {
                 "fields": ("marketing_consent_type_name",),
                 "description": (
-                    "django_crm ConsentType.name that gates Cart/Order push and GR contact creation. "
-                    "Resources are synced only after a Consent row with this name and consent_bool=True exists "
-                    "and was granted before the resource was created."
+                    "django_agreements AgreementDefinition.slug that gates Cart/Order push and GR contact "
+                    "creation. Resources are synced only when the latest ConsentRecord for this slug is "
+                    "granted and was recorded before the resource was created."
                 ),
             },
         ),
@@ -241,11 +241,11 @@ class GetResponseContactAdmin(SyncStatusBadgeMixin, admin.ModelAdmin):
         "created_at",
     )
     list_filter = ("sync_status", "campaign", "campaign__account", "last_sync_at")
-    search_fields = ("form__email", "campaign__name", "contact_id")
+    search_fields = ("email", "campaign__name", "contact_id")
     readonly_fields = ("contact_id", "created_at", "modified_at", "last_sync_at", "error_message", "payload_preview")
 
     fieldsets = (
-        (None, {"fields": ("campaign", "form")}),
+        (None, {"fields": ("campaign", "email")}),
         ("Contact Settings", {"fields": ("day_of_cycle", "scoring", "tags", "custom_field_values")}),
         ("GetResponse Sync", {"fields": ("contact_id", "sync_status", "last_sync_at", "error_message")}),
         ("API Preview", {"fields": ("payload_preview",), "classes": ("collapse",)}),
@@ -254,7 +254,7 @@ class GetResponseContactAdmin(SyncStatusBadgeMixin, admin.ModelAdmin):
 
     @admin.display(description="Email")
     def form_email(self, obj):
-        return obj.form.email
+        return obj.email
 
     @admin.display(description="API Payload Preview")
     def payload_preview(self, obj):

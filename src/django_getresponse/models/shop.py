@@ -112,8 +112,8 @@ class GetResponseShop(BaseModel):
         default="marketing",
         blank=True,
         help_text=(
-            "django_crm ConsentType.name that gates GR sync. Cart/Order push and "
-            "GR contact creation happen only after this consent is granted (consent_bool=True). "
+            "django_agreements AgreementDefinition.slug that gates GR sync. Cart/Order push and "
+            "GR contact creation happen only after this consent is granted (latest ConsentRecord). "
             "Leave EMPTY to disable the gate for this shop: cart/order then sync without any "
             "consent check (contact auto-created from the cart/order email)."
         ),

@@ -51,7 +51,7 @@ class ContactCustomFieldsService:
             from django_getresponse.models import GetResponseContact
 
             contact = GetResponseContact.objects.filter(
-                form__email=email, sync_status="synced", contact_id__isnull=False
+                email=email, sync_status="synced", contact_id__isnull=False
             ).first()
 
             if not contact:
@@ -176,7 +176,7 @@ class ContactCustomFieldsService:
         from django_getresponse.models import GetResponseAccount, GetResponseContact
 
         try:
-            contact = GetResponseContact.objects.filter(form__email=email, sync_status="synced").first()
+            contact = GetResponseContact.objects.filter(email=email, sync_status="synced").first()
 
             if not contact or not contact.contact_id:
                 logger.debug(f"No synced contact found for email: {email}")
