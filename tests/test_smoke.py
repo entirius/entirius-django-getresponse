@@ -4,8 +4,8 @@
 
 """Smoke test: every public submodule imports cleanly under a configured Django.
 
-Import-only on purpose — django_crm is not installed in tests/settings.py (mutual
-dependency, unpublished), so no test may touch the DB or resolve the crm FKs.
+Import-only on purpose — django_agreements is not installed in tests/settings.py
+(the consent gate imports it lazily), so no test may touch the DB.
 """
 
 import importlib

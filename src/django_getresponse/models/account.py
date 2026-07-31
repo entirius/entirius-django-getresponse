@@ -9,7 +9,6 @@ from django_utils.models.base_model import BaseModel
 class GetResponseAccount(BaseModel):
     """
     GetResponse API credentials and account configuration.
-    Moved from django_crm.GetResponseService for better separation of concerns.
 
     Each account is assigned to a specific channel, allowing each channel
     to have its own GetResponse configuration.

@@ -2,7 +2,7 @@
 
 GetResponse marketing integration for Volkanos — distribution `entirius-django-getresponse`,
 Django app `django_getresponse`. Syncs product catalog, categories, carts, orders and contacts
-from `django_pim` / `django_checkout` / `django_crm` into GetResponse Shops and Campaigns.
+from `django_pim` / `django_checkout` into GetResponse Shops and Campaigns.
 Real-time cart/order sync via Django signals, bulk catalog sync via management commands and
 Celery tasks. Each channel maps to one or more GetResponse accounts, shops and campaigns.
 
@@ -25,6 +25,14 @@ Celery tasks. Each channel maps to one or more GetResponse accounts, shops and c
 - Migrations are part of the public contract — never edit an already released migration.
 - Default: do not commit — git is the user's call.
 
+## Commit Message Format
+
+**NEVER add `Co-Authored-By: Claude ...` (or any other Claude/Anthropic attribution) to commit messages.**
+
+This overrides the default Claude Code behavior of appending a `Co-Authored-By` trailer. Commit messages MUST contain only the user's authored content — no robot footer, no "Generated with Claude Code" line, no co-author trailer.
+
+Same rule applies to PR descriptions: no `Generated with [Claude Code]` footer.
+
 ## Architecture
 
 ```
@@ -40,7 +48,7 @@ src/django_getresponse/
 ├── tasks/                          # Celery shared_task bulk sync (queue "pim_pull")
 ├── management/commands/            # sync-shops/-campaigns/-categories/-products
 ├── dto/                            # cart, category, order, product payload DTOs
-└── utils/                          # contact_helpers (django_crm.Form lookups), sync_helpers
+└── utils/                          # contact_helpers (email-based contact lookups), sync_helpers
 ```
 
 Sync direction: most flows push Volkanos → GetResponse. Campaigns are pulled GR → Volkanos
@@ -55,7 +63,7 @@ All models inherit `django_utils.models.base_model.BaseModel` (adds `created_at`
 | Channel | idx (unique) | none (own channel model) |
 | GetResponseAccount | api_key, is_enabled, name | FK → Channel (CASCADE). Unique(channel, api_key) |
 | GetResponseCampaign | name, campaign_id, is_active, default_day_of_cycle | FK → GetResponseAccount (CASCADE), FK → django_regional.Language (null = fallback for any language). Unique(account, campaign_id) |
-| GetResponseContact | day_of_cycle (per-contact override), scoring, tags (JSON), custom_field_values (JSON) | FK → GetResponseCampaign, FK → django_crm.Form |
+| GetResponseContact | email (sync identity), day_of_cycle (per-contact override), scoring, tags (JSON), custom_field_values (JSON) | FK → GetResponseCampaign |
 | GetResponseShop | name, currency, language, external_language, domain_url(s), gr_shop_id, sync_status, last_sync_at, error_message + custom_field_ids | FK → Channel, FK → django_regional.Currency, FK → Language ×2, FK → Country, FK → GetResponseCampaign (cart_campaign). Unique(channel, name) |
 | ProductSync | gr_product_id, external_id, sync status | FK → GetResponseShop, FK → django_pim.Product |
 | CategorySync | sync status | FK → Channel, FK → GetResponseShop, FK → django_pim.ProductCategory |
@@ -93,7 +101,7 @@ Celery equivalents live in `tasks/` with matching names (`@shared_task(queue="pi
 | Module | Purpose |
 |---|---|
 | `django_checkout` | Cart/Order post_save senders (app-level coupling, no Python import) |
-| `django_crm` | Form FK + contact lookups — mutual dependency (crm's compat layer imports this app's models) |
+| `django_agreements` | marketing consent gate — latest ConsentRecord for the shop-configured slug (lazy import) |
 | `django_pim` | Product / ProductCategory sync sources |
 | `django_regional` | Language / Currency / Country FKs |
 | `django_utils` | `BaseModel`, `CeleryBaseCommand` |
@@ -116,8 +124,8 @@ Celery equivalents live in `tasks/` with matching names (`@shared_task(queue="pi
 make test
 ```
 
-`tests/settings.py` deliberately omits `django_crm` (mutual dependency, unpublished) — no test
-may touch the DB or resolve the crm FKs until `entirius-django-crm` is available.
+`tests/settings.py` deliberately omits `django_agreements` (the consent gate imports it
+lazily) — the suite stays import-only and never touches the DB.
 
 ## Gotchas
 
@@ -140,5 +148,6 @@ may touch the DB or resolve the crm FKs until `entirius-django-crm` is available
   `SEND_CART_UID_TO_GETRESPONSE_IN_LINK` is True.
 - `ProductSync` / `CategorySync` FK into `django_pim.Product` / `.ProductCategory` — this module
   will not load without django-pim installed.
-- The migration squash depends on `django_crm.0001_initial` (creates `django_crm.form`) — it must
-  NOT depend on crm's later proxy migration, which itself depends back on this app (cycle).
+- `0002_contact_email_drop_crm_form` is idempotent raw SQL bridging 2.x databases (FK on
+  django_crm.Form) to the email-based contact — the squash carries the final state; never
+  reintroduce a crm dependency here.

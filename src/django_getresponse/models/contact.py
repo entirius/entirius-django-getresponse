@@ -19,9 +19,8 @@ def get_default_custom_field_values():
 class GetResponseContact(BaseModel):
     """
     GetResponse contact/profile configuration.
-    Moved from django_crm.GetResponseProfiles for better separation of concerns.
 
-    This model stores the configuration for syncing a form submission to GetResponse.
+    This model stores the configuration for syncing a contact to GetResponse.
     """
 
     campaign = models.ForeignKey(
@@ -30,12 +29,7 @@ class GetResponseContact(BaseModel):
         related_name="contacts",
         help_text="GetResponse campaign for this contact",
     )
-    form = models.ForeignKey(
-        "django_crm.Form",
-        on_delete=models.CASCADE,
-        related_name="getresponse_contacts",
-        help_text="CRM form associated with this contact",
-    )
+    email = models.EmailField(help_text="Contact e-mail address (sync identity)")
     day_of_cycle = models.IntegerField(blank=True, null=True, help_text="Day of autoresponder cycle")
     scoring = models.IntegerField(blank=True, null=True, help_text="Contact scoring value")
     tags = models.JSONField(default=get_default_tags, help_text="Tags to assign to contact in GetResponse")
@@ -62,29 +56,26 @@ class GetResponseContact(BaseModel):
         verbose_name_plural = "GetResponse Contacts"
         db_table = "django_getresponse_contact"
         indexes = [
-            models.Index(fields=["campaign", "form"]),
+            models.Index(fields=["email"], name="idx_grcontact_email"),
+            models.Index(fields=["campaign", "email"], name="idx_grcontact_campaign_email"),
             models.Index(fields=["contact_id"]),
             models.Index(fields=["sync_status"]),
         ]
 
     def __str__(self):
-        return f"Contact for {self.form.email} in {self.campaign.name}"
+        return f"Contact for {self.email} in {self.campaign.name}"
 
-    def generate_payload(self, form=None, custom_tags=None) -> dict:
+    def generate_payload(self, custom_tags=None) -> dict:
         """
         Generate GetResponse API payload for creating/updating contact.
 
         Args:
-            form: Form instance (defaults to self.form)
             custom_tags: Optional tags to override default tags
 
         Returns:
             dict: Payload ready for GetResponse API
         """
-        if form is None:
-            form = self.form
-
-        email = form.email
+        email = self.email
         tags = custom_tags if custom_tags else self.tags
         custom_field_values = self.custom_field_values
 

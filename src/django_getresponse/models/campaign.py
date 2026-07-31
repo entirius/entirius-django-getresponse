@@ -10,7 +10,6 @@ from django_utils.models.base_model import BaseModel
 class GetResponseCampaign(BaseModel):
     """
     GetResponse campaign configuration.
-    Moved from django_crm for better separation of concerns.
     """
 
     account = models.ForeignKey(

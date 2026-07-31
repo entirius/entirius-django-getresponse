@@ -63,11 +63,10 @@ class ContactAutoCreateService:
                 if not campaign:
                     return False
 
-                form = self._get_or_create_form()
-                if self._contact_exists_for_campaign(form, campaign):
+                if self._contact_exists_for_campaign(campaign):
                     return True
 
-                success = self._create_contact_in_api(form, campaign)
+                success = self._create_contact_in_api(campaign)
                 return success
 
         except Exception as e:
@@ -92,28 +91,17 @@ class ContactAutoCreateService:
 
         return campaign
 
-    def _get_or_create_form(self):
-        """Get or create minimal Form record (required by GetResponseContact FK)."""
-        from django_crm.models import Form
-
-        form, created = Form.objects.get_or_create(
-            email=self.context.email,
-            defaults={"extra": {"source": self.context.source, "created_from": "cart_checkout"}},
-        )
-        self.logger.debug(f"Form {'created' if created else 'found'} for email={self.context.email} (id={form.id})")
-        return form
-
-    def _contact_exists_for_campaign(self, form, campaign) -> bool:
-        """Check if contact already exists for this form and campaign."""
+    def _contact_exists_for_campaign(self, campaign) -> bool:
+        """Check if contact already exists for this email and campaign."""
         from django_getresponse.models import GetResponseContact
 
-        existing_contact = GetResponseContact.objects.filter(form=form, campaign=campaign).first()
+        existing_contact = GetResponseContact.objects.filter(email=self.context.email, campaign=campaign).first()
 
         if existing_contact and existing_contact.contact_id:
             return True
         return False
 
-    def _create_contact_in_api(self, form, campaign) -> bool:
+    def _create_contact_in_api(self, campaign) -> bool:
         """Create contact in GetResponse API and store record."""
         from django_getresponse.models import GetResponseContact
 
@@ -125,7 +113,7 @@ class ContactAutoCreateService:
         )
 
         contact_record = GetResponseContact.objects.create(
-            form=form, campaign=campaign, tags=tags_data, sync_status="pending"
+            email=self.context.email, campaign=campaign, tags=tags_data, sync_status="pending"
         )
         self.logger.debug(f"Created GetResponseContact record (id={contact_record.id})")
 
