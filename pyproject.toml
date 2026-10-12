@@ -1,7 +1,21 @@
 [project]
 name = "entirius-django-getresponse"
 version = "3.0.0"
-description = "GetResponse marketing integration for Volkanos: accounts, campaigns, contact/category/product sync"
+description = "GetResponse marketing integration for Entirius: accounts, campaigns, contact, category and product sync"
+keywords = ["django", "getresponse", "email-marketing", "integration", "ecommerce", "entirius"]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Django",
+    "Framework :: Django :: 5.2",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Mozilla Public License 2.0 (MPL 2.0)",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Internet :: WWW/HTTP",
+]
 authors = [{ name = "Entirius" }]
 maintainers = [
     { name = "Piotr Brzozowski" },
@@ -35,7 +49,11 @@ dev  = ["ruff", "pre-commit"]
 test = ["pytest", "pytest-django", "dj-database-url", "psycopg[binary]"]
 
 [project.urls]
+Homepage = "https://docs.entirius.com/"
+Documentation = "https://github.com/entirius/entirius-django-getresponse/tree/develop/docs"
 Repository = "https://github.com/entirius/entirius-django-getresponse"
+Changelog = "https://github.com/entirius/entirius-django-getresponse/releases"
+Issues = "https://github.com/entirius/entirius-django-getresponse/issues"
 
 [build-system]
 requires = ["hatchling"]
